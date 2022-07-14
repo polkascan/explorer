@@ -1,0 +1,109 @@
+version: '3.2'
+
+services:
+
+  harvester:
+    build: harvester/.
+    image: polkascan/harvester
+    restart: unless-stopped
+    entrypoint: /usr/src/start.sh
+    ports:
+      - '9620:9616'
+    environment:
+      - DB_CONNECTION=mysql+pymysql://root:root@mysql:3306/polkascan?charset=utf8mb4
+      - SUBSTRATE_RPC_URL=ws://substrate-node:9944
+#      - SUBSTRATE_RPC_URL=ws://host.docker.internal:9944
+      - NODE_TYPE=archive
+      - SUBSTRATE_SS58_FORMAT=42
+      - INSTALLED_ETL_DATABASES=polkascan_explorer
+    depends_on:
+      - mysql
+      - substrate-node
+
+  polling:
+    build:
+      context: explorer-api/.
+      dockerfile: ./docker/polling/Dockerfile
+    image: polkascan/explorer-polling
+    command: python polling.py
+    depends_on:
+      - redis
+      - mysql
+    environment:
+      - DB_USERNAME=root
+      - DB_NAME=polkascan_explorer
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_PASSWORD=root
+      - BROADCAST_URI=redis://redis:6379
+      - CHAIN_ID=polkadot
+      - SENTRY_PROJECT_NAME=explorer-polling-v2
+      - SENTRY_SERVER_NAME=polkadapt
+      - SENTRY_DSN=
+
+  api:
+    build:
+      context: explorer-api/.
+      dockerfile: ./docker/api/Dockerfile
+    image: polkascan/explorer-api
+    command: bash -c "/usr/src/start-api.sh"
+    ports:
+      - "8000:8000"
+    depends_on:
+      - redis
+      - mysql
+    environment:
+      - DB_USERNAME=root
+      - DB_NAME=polkascan_explorer
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_PASSWORD=root
+      - DB_HARVESTER_NAME=polkascan
+      - DOMAIN=localhost
+      - SERVER_ADDR=localhost
+      - SERVER_PORT=8000
+      - WEBSOCKET_URI=ws://localhost:8000
+      - BACKEND_CORS_ORIGINS=[]
+      - BROADCAST_URI=redis://redis:6379
+      - API_SQLA_URI=mysql+pymysql://root:root@mysql:3306/polkascan_explorer?charset=utf8mb4
+      - CHAIN_ID=polkadot
+      - SENTRY_PROJECT_NAME=explorer-api-v2
+      - SENTRY_SERVER_NAME=polkadapt
+      - SENTRY_DSN=
+
+  gui:
+    build:
+      context: explorer-ui/.
+    image: polkascan/explorer-ui
+    ports:
+      - "8080:80"
+    depends_on:
+      - api
+      - substrate-node
+
+  substrate-node:
+    image: arjanz/substrate-node-template:latest
+    volumes:
+      - 'substrate-node:/substrate'
+    ports:
+      - '9944:9944'
+      - '9933:9933'
+    command: --dev --base-path /substrate/db --ws-external --rpc-cors=all --rpc-external --rpc-methods=Unsafe --no-telemetry --no-prometheus --pruning=archive
+
+  mysql:
+    image: mysql:latest
+    volumes:
+      - 'mysql-data:/var/lib/mysql'
+    ports:
+      - '33061:3306'
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=polkascan
+
+  redis:
+    image: "redis:latest"
+
+volumes:
+  substrate-node:
+  mysql-data:
+
