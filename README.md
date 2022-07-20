@@ -1,16 +1,44 @@
 # Polkascan Explorer
 
+Polkascan Explorer provides a generalized block explorer for 
+[Substrate](https://github.com/paritytech/substrate)-based blockchains.
+
 ## Installation
 Run `init.sh` to initialize repository; this will basically run:
   * `git submodule update --init --recursive`  
   * `cp explorer-ui-config.json explorer-ui/src/assets/config.json`
+
+The [explorer-ui-config.json](https://github.com/polkascan/explorer/blob/main/explorer-ui-config.json) file contains 
+the URLs of theexposed Substrate and Explorer API endpoints
 
 ## Running the application
 * `docker-compose up --build`
 
 ## Links
 * Polkascan UI: http://127.0.0.1:8080/
-* Polkascan API: http://127.0.0.1:8000/graphql/
+* Polkascan API playground: http://127.0.0.1:8000/graphql/
+* Polkascan API websocket: ws://127.0.0.1:8000/graphql-ws
+
+## Components
+
+The explorer application consist of several components:
+
+### Harvester component
+
+The [harvester](https://github.com/polkascan/harvester) retrieves data from the connected 
+Substrate node and stores it into a MySQL (by default) database.
+
+### Explorer API component
+
+The [explorer API](https://github.com/polkascan/explorer-api) transforms the data via an ETL process into an 
+explorer-specific format. It exposes a GraphQL endpoint and enables subscription-based communication to the UI.
+
+### Explorer UI component
+
+[Explorer UI](https://github.com/polkascan/explorer-ui) is a client-sided [Angular](https://angular.io/) based application that utilizes 
+[PolkADAPT](https://github.com/polkascan/polkadapt) and its Adapters to obtain data from multiple data sources, like 
+the Explorer API and the Substrate node. Its design is based on flat [Material](https://material.angular.io/) component 
+design, styled in Polkascan branding.
 
 # Modifications
 
