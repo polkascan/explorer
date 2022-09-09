@@ -25,6 +25,7 @@ services:
       context: explorer-api/.
       dockerfile: ./docker/polling/Dockerfile
     image: polkascan/explorer-polling
+    restart: unless-stopped
     command: python polling.py
     depends_on:
       - redis
@@ -46,6 +47,7 @@ services:
       context: explorer-api/.
       dockerfile: ./docker/api/Dockerfile
     image: polkascan/explorer-api
+    restart: unless-stopped
     command: bash -c "/usr/src/start-api.sh"
     ports:
       - "8000:8000"
@@ -75,6 +77,7 @@ services:
     build:
       context: explorer-ui/.
     image: polkascan/explorer-ui
+    restart: unless-stopped
     ports:
       - "8080:80"
     depends_on:
@@ -83,6 +86,7 @@ services:
 
   substrate-node:
     image: arjanz/substrate-node-template:latest
+    restart: unless-stopped
     volumes:
       - 'substrate-node:/substrate'
     ports:
