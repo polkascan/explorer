@@ -9,15 +9,51 @@ Run `init.sh` to initialize repository; this will basically run:
   * `cp explorer-ui-config.json explorer-ui/src/assets/config.json`
 
 The [explorer-ui-config.json](https://github.com/polkascan/explorer/blob/main/explorer-ui-config.json) file contains 
-the URLs of theexposed Substrate and Explorer API endpoints
+the URLs of the exposed Substrate and Explorer API endpoints
 
 ## Running the application
+
+### Docker
+
 * `docker-compose up --build`
 
-## Links
+### Local
+
+#### Harvester
+* `cd harvester`
+* `pip install -r requirements.txt`
+* `./harvester-cli.sh run`
+
+#### Explorer API
+
+* `cd explorer-api`
+* `pip install -r requirements_api.txt`
+* `./start-api.sh`
+
+#### Explorer UI
+
+For a dev server, open a terminal and run:
+```shell
+cd polkadapt
+npm i
+npm run build
+``` 
+When making changes in `polkadapt` source files you have to build again.
+
+Now open a second terminal and run:
+```shell
+npm i
+npm run start
+```
+Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+
+## Services
 * Polkascan UI: http://127.0.0.1:8080/
 * Polkascan API playground: http://127.0.0.1:8000/graphql/
 * Polkascan API websocket: ws://127.0.0.1:8000/graphql-ws
+* MySQL database exposed at mysql://root:root@localhost:33061
+
+For more information or modification see the [Docker compose file](https://github.com/polkascan/explorer/blob/main/docker-compose.yml)
 
 ## Components
 
@@ -27,6 +63,69 @@ The explorer application consist of several components:
 
 The [harvester](https://github.com/polkascan/harvester) retrieves data from the connected 
 Substrate node and stores it into a MySQL (by default) database.
+
+#### Storage cron
+
+With the processing of each block, it can also be desirable to retrieve and decode certain storage records. By default, 
+for every block the `System.Events` are stored as this is a fundamental element to determine which calls are executed.
+
+When other storage records are needed, for example a balance snapshot of all accounts every 10000 blocks, additional 
+cron items can be added:
+
+```bash
+cd harvester
+./harvester-cli.sh storage-cron add 
+
+> Block interval (e.g. 10 = every 10th block): 10000
+> Pallet: System
+> Storage function: Account
+> Added cron System.Account every 10000 blocks
+```
+
+Check the current storage cron items:
+```
+  Id    Block interval  Pallet    Storage name
+----  ----------------  --------  --------------
+   1                 1  System    Events
+   2             10000  System    Account
+```
+
+Then run the harvester:
+```bash
+./harvester-cli.sh run 
+```
+
+#### Storage tasks
+
+When storage cron items retrieve records as part of the block harvest process, storage tasks can be added to retrieve 
+records for any given blocks that are already processed. 
+
+Also, this feature can be used standalone, so it basically acts as a storage harvester.
+
+Example: Store total issuance for blocks 1-1000:
+```bash
+cd harvester
+./harvester-cli.sh storage-tasks add
+> Pallet: Balances
+> Storage function: TotalIssuance
+> Blocks (e.g. '100,104' or '100-200'): 1-1000
+> Added task Balances.TotalIssuance for blocks 1-1000 
+```
+
+Then run only the 'cron' job of the harvester:
+```bash
+./harvester-cli.sh run --job cron 
+```
+
+List progress of tasks:
+
+```bash
+./harvester-cli.sh storage-tasks list
+>   Id  Pallet    Storage name    Blocks                                 Complete
+> ----  --------  --------------  -------------------------------------  ----------
+>    1  System    Account         {'block_ids': [1, 2]}                  True
+>    2  Balances  TotalIssuance   {'block_end': 1000, 'block_start': 1}  True
+```
 
 ### Explorer API component
 
@@ -39,6 +138,11 @@ explorer-specific format. It exposes a GraphQL endpoint and enables subscription
 [PolkADAPT](https://github.com/polkascan/polkadapt) and its Adapters to obtain data from multiple data sources, like 
 the Explorer API and the Substrate node. Its design is based on flat [Material](https://material.angular.io/) component 
 design, styled in Polkascan branding.
+
+
+
+
+
 
 # Modifications
 
