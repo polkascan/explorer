@@ -1,5 +1,5 @@
 # Polkascan Explorer
-<img width="432" valign="top" alt="Screenshot 2022-10-10 at 10 03 34" src="https://user-images.githubusercontent.com/5286904/194822070-48c172d4-c65d-4ea0-8287-15b772f32eb4.png"> <img width="412" valign="top" alt="Screenshot 2022-10-10 at 10 30 11" src="https://user-images.githubusercontent.com/5286904/194826118-9d655e0c-02d3-4a8c-b4f1-73bfc00e076b.png">
+<img width="332" valign="top" alt="Screenshot 2022-10-10 at 10 03 34" src="https://user-images.githubusercontent.com/5286904/194822070-48c172d4-c65d-4ea0-8287-15b772f32eb4.png"> <img width="312" valign="top" alt="Screenshot 2022-10-10 at 10 30 11" src="https://user-images.githubusercontent.com/5286904/194826118-9d655e0c-02d3-4a8c-b4f1-73bfc00e076b.png">
 
 Polkascan Explorer provides a generalized block explorer for 
 [Substrate](https://github.com/paritytech/substrate)-based blockchains.
