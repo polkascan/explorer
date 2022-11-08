@@ -41,6 +41,7 @@ services:
       - SENTRY_PROJECT_NAME=explorer-polling-v2
       - SENTRY_SERVER_NAME=polkadapt
       - SENTRY_DSN=
+      - BLOCK_LIMIT_COUNT=500000
 
   api:
     build:
@@ -72,6 +73,7 @@ services:
       - SENTRY_PROJECT_NAME=explorer-api-v2
       - SENTRY_SERVER_NAME=polkadapt
       - SENTRY_DSN=
+      - BLOCK_LIMIT_COUNT=500000
 
   gui:
     build:
