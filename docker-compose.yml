@@ -87,7 +87,7 @@ services:
       - substrate-node
 
   substrate-node:
-    image: arjanz/substrate-node-template:latest
+    image: parity/substrate:latest
     restart: unless-stopped
     volumes:
       - 'substrate-node:/substrate'
