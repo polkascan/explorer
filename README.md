@@ -4,7 +4,18 @@
 Polkascan Explorer provides a generalized block explorer for 
 [Substrate](https://github.com/paritytech/substrate)-based blockchains.
 
-## Installation
+It combines data retrieved directly from the Substrate node RPC with data retrieved from a third-party indexer API.
+
+At the moment the following third-party data are supported: 
+
+* Polkascan API
+* Subsquid 
+
+## Installation using Subsquid endpoints
+
+See the installation instructions of the [Polkascan Explorer UI repos](https://github.com/polkascan/explorer-ui) if the explorer is solely going to run with [Subsquid](https://www.subsquid.io/) endpoints.
+
+## Installation using Polkascan API endpoints
 Run `init.sh` to initialize repository; this will basically run:
   * `git submodule update --init --recursive`  
   * `cp explorer-ui-config.json explorer-ui/src/assets/config.json`
