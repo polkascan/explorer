@@ -20,6 +20,7 @@
 #
 echo "Init Git submodules ..."
 git submodule update --init --recursive
-echo "Copying explorer-ui-config.json to submodule ..."
+echo "Copying explorer-ui-config.json and explorer-ui-privacy-policy.html to submodule ..."
 cp explorer-ui-config.json explorer-ui/src/assets/config.json
+cp explorer-ui-privacy-policy.html explorer-ui/src/assets/privacy-policy.html
 echo "Done. Run 'docker-compose up --build' to build and start application"

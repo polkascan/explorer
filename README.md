@@ -19,6 +19,7 @@ See the installation instructions of the [Polkascan Explorer UI repos](https://g
 Run `init.sh` to initialize repository; this will basically run:
   * `git submodule update --init --recursive`  
   * `cp explorer-ui-config.json explorer-ui/src/assets/config.json`
+  * `cp explorer-ui-privacy-policy.html explorer-ui/src/assets/privacy-policy.html`
 
 The [explorer-ui-config.json](https://github.com/polkascan/explorer/blob/main/explorer-ui-config.json) file contains 
 the URLs of the exposed Substrate and Explorer API endpoints
