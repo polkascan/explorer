@@ -94,7 +94,7 @@ services:
     ports:
       - '9944:9944'
       - '9933:9933'
-    command: --dev --base-path /substrate/db --ws-external --rpc-cors=all --rpc-external --rpc-methods=Unsafe --no-telemetry --no-prometheus --pruning=archive
+    command: --dev --base-path /substrate/db  --rpc-cors=all --rpc-external --rpc-methods=Unsafe --no-telemetry --no-prometheus --pruning=archive
 
   mysql:
     image: mysql:latest
